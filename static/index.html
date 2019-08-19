@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+
+    <title>Album example for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+    <script src="jquery-3.4.1.min.js"></script>
+    <script src="angular.min.js"></script>
+</head>
+
+<body ng-app='antler-tinder'>
+
+    <main role="main">
+
+        <div class="album py-5 bg-light">
+            <div class="container" ng-controller='antlerTinderController'>
+
+                <div class="row" ng-show="!myself">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Type your name..." ng-model='q' autofocus>
+                        </div>
+                        
+                    </form>
+                </div>
+                <div class="row" ng-show="!myself">
+                    <div ng-repeat="member in members|filter:q track by $index" class="col-md-4" ng-click='getMatch(member)'>
+                        <div class="card mb-4 shadow-sm">
+                            <img class="card-img-top" ng-src="{{ member.image }}">
+                            <div class="card-body">
+                                <p class="card-text">{{ member.name }}</p>
+                                <p>Areas of interest:<br>
+                                    <span ng-repeat="area in member.areas track by $index"
+                                        class="badge badge-secondary">{{ area }}</span>
+                                </p>
+                                <p>Background:<br>
+                                    <span ng-repeat="background in member.background track by $index"
+                                        class="badge badge-secondary">{{ background }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" ng-show="myself" ng-click="reset()">Back</button>
+                <br/>
+                <div class="row" ng-show="myself">
+                    <div class="card mb-12 shadow-sm">
+                        <img class="card-img-top" ng-src="{{ myself.image }}">
+                        <div class="card-body">
+                            <p class="card-text">{{ myself.name }}</p>
+                            <p>Areas of interest:<br>
+                                <span ng-repeat="area in myself.areas track by $index"
+                                    class="badge badge-secondary">{{ area }}</span>
+                            </p>
+                            <p>Background:<br>
+                                <span ng-repeat="background in myself.background track by $index"
+                                    class="badge badge-secondary">{{ background }}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <br/>
+                <br/>
+                <h2 class="row" ng-show="matches.length">Matches based on areas of interest:</h2>
+                <div class="row" ng-show="matches.length">
+                    <div ng-repeat="member in matches track by $index" class="col-md-4" ng-click='getMatch(member)'>
+                        <div class="card mb-4 shadow-sm">
+                            <img class="card-img-top" ng-src="{{ member.image }}">
+                            <div class="card-body">
+                                <p class="card-text">{{ member.name }}</p>
+                                <p class="card-text">Score: {{ member.score }}</p>
+                                <p>Areas of interest:<br>
+                                    <span ng-repeat="area in member.areas track by $index"
+                                        class="badge badge-secondary">{{ area }}</span>
+                                </p>
+                                <p>Background:<br>
+                                    <span ng-repeat="background in member.background track by $index"
+                                        class="badge badge-secondary">{{ background }}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+
+
+    <script type="text/javascript">
+        const API_URL = 'https://ce7131f5.ngrok.io/';
+        angular.module('antler-tinder', []).controller('antlerTinderController', function ($scope, $http) {
+            $scope.members = [];
+            $scope.matches = [];
+            $scope.myself = null;
+
+            $http.get(API_URL + 'members').then(response => {
+                $scope.members = response.data;
+            });
+
+            $scope.getMatch = function (member) {
+                $http.get(API_URL + 'tinder?name=' + member.name).then(response => {
+                    $scope.myself = member;
+
+                    $scope.matches = response.data;
+                });
+            };
+
+            $scope.reset = function () {
+                $scope.matches = [];
+                $scope.myself = null;
+            };
+        });
+
+    </script>
+</body>
+
+</html>
