@@ -3,6 +3,7 @@
 
 import csv
 import json
+import os
 
 from bottle import route, run, request, response
 
@@ -228,4 +229,4 @@ def tinder():
     return json.dumps(matches)
 
 
-run(host='localhost', port=8080)
+run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
