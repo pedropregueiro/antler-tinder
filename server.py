@@ -6,7 +6,7 @@ import json
 import os
 
 import requests
-from bottle import route, run, request, response
+from bottle import route, run, request, response, static_file
 
 header = None
 rows = []
@@ -241,5 +241,9 @@ def tinder():
     matches = get_matches(request_name)
     return json.dumps(matches)
 
+
+@route('/static/<filename>')
+def server_static(filename):
+    return static_file(filename, root='static')
 
 run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
