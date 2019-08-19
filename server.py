@@ -242,8 +242,9 @@ def tinder():
     return json.dumps(matches)
 
 
-@route('/static/<filename>')
+@route('/static/<filename:path>')
 def server_static(filename):
     return static_file(filename, root='static')
+
 
 run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
