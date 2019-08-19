@@ -24,10 +24,12 @@ FIRST_AREA_FACTOR = 5
 SECOND_AREA_FACTOR = 2
 OCEAN_FACTOR = 0.5
 
+trello_file = os.environ.get('TRELLO_FILE_LOCATION', 'trello.json')
+founders_csv_file = os.environ.get('FOUNDERS_FILE_LOCATION', 'founders.csv')
 
 def load_images():
     images = {}
-    cards = json.load(open('trello.json', mode='r', encoding='utf-8'))
+    cards = json.load(open(trello_file, mode='r', encoding='utf-8'))
 
     for card in cards:
         name = card['name'].replace('\t', ' ').strip()
@@ -38,7 +40,7 @@ def load_images():
 
 images = load_images()
 
-with open('founders.csv', mode='r', encoding='utf-8') as csv_file:
+with open(founders_csv_file, mode='r', encoding='utf-8') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     for index, row in enumerate(csv_reader):
         if index < 1:
