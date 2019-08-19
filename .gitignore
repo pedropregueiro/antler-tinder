@@ -102,3 +102,9 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# Founders file
+founders.csv
+
+# PyCharm
+.idea/
