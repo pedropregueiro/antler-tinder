@@ -5,6 +5,7 @@ import csv
 import json
 import os
 
+import requests
 from bottle import route, run, request, response
 
 header = None
@@ -24,23 +25,33 @@ FIRST_AREA_FACTOR = 5
 SECOND_AREA_FACTOR = 2
 OCEAN_FACTOR = 0.5
 
-trello_file = os.environ.get('TRELLO_FILE_LOCATION', 'trello.json')
-founders_csv_file = os.environ.get('FOUNDERS_FILE_LOCATION', 'founders.csv')
+trello_file_location = os.environ.get('TRELLO_FILE_LOCATION')
+founders_csv_file_location = os.environ.get('FOUNDERS_FILE_LOCATION')
+
+cards = requests.get(trello_file_location).json()
+
+out_filename = '/tmp/out.csv'
+try:
+    founders_csv_response = requests.get(founders_csv_file_location, allow_redirects=True)
+    with open(out_filename, 'wb') as fd:
+        for chunk in founders_csv_response.iter_content(chunk_size=128):
+            fd.write(chunk)
+except Exception as e:
+    pass
+
 
 def load_images():
     images = {}
-    cards = json.load(open(trello_file, mode='r', encoding='utf-8'))
-
     for card in cards:
-        name = card['name'].replace('\t', ' ').strip()
+        card_name = card['name'].replace('\t', ' ').strip()
         image_url = card['attachments'][0]['url']
-        images[name] = image_url
+        images[card_name] = image_url
     return images
 
 
 images = load_images()
 
-with open(founders_csv_file, mode='r', encoding='utf-8') as csv_file:
+with open(out_filename, mode='r', encoding='utf-8') as csv_file:
     csv_reader = csv.reader(csv_file, delimiter=',')
     for index, row in enumerate(csv_reader):
         if index < 1:
