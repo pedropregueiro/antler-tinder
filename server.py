@@ -6,7 +6,7 @@ import json
 import os
 
 import requests
-from bottle import route, run, request, response, static_file
+from bottle import route, run, request, response, static_file, redirect
 
 header = None
 rows = []
@@ -245,6 +245,11 @@ def tinder():
 @route('/static/<filename:path>')
 def server_static(filename):
     return static_file(filename, root='static')
+
+
+@route('/')
+def index():
+    redirect("/static/index.html")
 
 
 run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
